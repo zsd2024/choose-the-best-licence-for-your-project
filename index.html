@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>选择开源协议</title>
+	<link href="bootstrap-5.3.3-dist/bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background: linear-gradient(135deg, #0078d4, #00bcf2, #0078d4);
+			background-size: 400% 400%;
+			animation: gradientAnimation 15s ease infinite;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		@keyframes gradientAnimation {
+			0% {
+				background-position: 0% 50%;
+			}
+
+			50% {
+				background-position: 100% 50%;
+			}
+
+			100% {
+				background-position: 0% 50%;
+			}
+		}
+
+		.container {
+			background-color: rgba(255, 255, 255, 0.5);
+			backdrop-filter: blur(10px);
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			padding: 40px;
+			width: 80vw;
+			/* 使用百分比设置宽度 */
+			text-align: center;
+			/* 使文本居中 */
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 80vh;
+			/* 使容器高度为视口高度的80% */
+		}
+
+		.question {
+			margin-bottom: 20px;
+			display: none;
+			width: 100%;
+			/* 确保问题框宽度占满容器 */
+		}
+
+		.question.active {
+			display: block;
+		}
+
+		.result {
+			margin-top: 20px;
+			font-weight: bold;
+			display: none;
+			width: 100%;
+			/* 确保结果框宽度占满容器 */
+		}
+
+		.btn-option {
+			border-radius: 8px;
+			margin: 5px;
+			width: auto;
+			/* 自动调整按钮宽度 */
+			min-width: 100px;
+			/* 最小宽度 */
+			background-color: rgba(255, 255, 255, 0.3);
+			border: none;
+			transition: background-color 0.3s, color 0.3s;
+			white-space: nowrap;
+			/* 防止文字换行 */
+			font-size: 1em;
+			/* 相对字体大小 */
+		}
+
+		.btn-option.selected {
+			background-color: #0078d4;
+			color: white;
+		}
+
+		.btn-option:hover {
+			background-color: rgba(255, 255, 255, 0.5);
+		}
+
+		.btn-option.selected:hover {
+			background-color: #005a9e;
+		}
+
+		.btn-restart {
+			border-radius: 8px;
+			margin: 5px;
+			width: auto;
+			/* 自动调整按钮宽度 */
+			min-width: 100px;
+			/* 最小宽度 */
+			background-color: rgba(0, 120, 212, 0.6);
+			color: white;
+			border: none;
+			transition: background-color 0.3s, color 0.3s;
+			white-space: nowrap;
+			/* 防止文字换行 */
+			font-size: 1em;
+			/* 相对字体大小 */
+		}
+
+		.btn-restart:hover {
+			background-color: rgba(0, 90, 158, 0.6);
+		}
+
+		h1 {
+			font-size: 70vm;
+			/* 相对字体大小 */
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1 class="text-center mb-4">选择最适合你的项目的开源协议</h1>
+		<div class="question active" id="q1">
+			<p>1. 你是否希望你的项目代码可以被商业使用？</p>
+			<button class="btn btn-option" onclick="selectOption('q1', 'yes', 'q2')">是</button>
+			<button class="btn btn-option" onclick="selectOption('q1', 'no', 'q2')">否</button>
+		</div>
+		<div class="question" id="q2">
+			<p>2. 你是否希望你的项目代码可以被修改？</p>
+			<button class="btn btn-option" onclick="selectOption('q2', 'yes', 'q3')">是</button>
+			<button class="btn btn-option" onclick="selectOption('q2', 'no', 'q3')">否</button>
+		</div>
+		<div class="question" id="q3">
+			<p>3. 你是否希望你的项目代码可以被再次分发？</p>
+			<button class="btn btn-option" onclick="selectOption('q3', 'yes', 'result')">是</button>
+			<button class="btn btn-option" onclick="selectOption('q3', 'no', 'result')">否</button>
+		</div>
+		<div class="result" id="result">
+			<button class="btn btn-restart mt-3" onclick="restart()">再次选择</button>
+		</div>
+	</div>
+
+	<script>
+		let answers = {};
+
+		function selectOption(questionId, value, nextId) {
+			answers[questionId] = value;
+			document.querySelectorAll(`#${questionId} .btn-option`).forEach(btn => btn.classList.remove('selected'));
+			event.target.classList.add('selected');
+			setTimeout(() => nextQuestion(nextId), 300);
+		}
+
+		function nextQuestion(nextId) {
+			const currentQuestion = document.querySelector('.question.active');
+			currentQuestion.classList.remove('active');
+			if (nextId === 'result') {
+				selectLicense();
+			} else {
+				document.getElementById(nextId).classList.add('active');
+			}
+		}
+
+		function selectLicense() {
+			const q1 = answers['q1'];
+			const q2 = answers['q2'];
+			const q3 = answers['q3'];
+
+			let license = "未知";
+			if (q1 === "yes" && q2 === "yes" && q3 === "yes") {
+				license = "MIT License";
+			} else if (q1 === "yes" && q2 === "yes" && q3 === "no") {
+				license = "Apache License 2.0";
+			} else if (q1 === "yes" && q2 === "no" && q3 === "yes") {
+				license = "BSD 3-Clause License";
+			} else if (q1 === "no" && q2 === "yes" && q3 === "yes") {
+				license = "GNU GPLv3";
+			} else if (q1 === "no" && q2 === "no" && q3 === "yes") {
+				license = "GNU AGPLv3";
+			} else if (q1 === "no" && q2 === "yes" && q3 === "no") {
+				license = "GNU LGPLv3";
+			} else if (q1 === "no" && q2 === "no" && q3 === "no") {
+				license = "Creative Commons Zero v1.0 Universal";
+			}
+
+			document.getElementById("result").innerHTML = `建议的开源协议: ${license}<br><button class="btn btn-restart mt-3" onclick="restart()">再次选择</button>`;
+			document.getElementById("result").style.display = "block";
+		}
+
+		function restart() {
+			answers = {};
+			document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+			document.getElementById('q1').classList.add('active');
+			document.querySelectorAll('.btn-option').forEach(btn => btn.classList.remove('selected'));
+			document.getElementById("result").style.display = "none";
+			document.getElementById("result").innerHTML = '';
+		}
+
+		function resizeContainer() {
+			const container = document.querySelector('.container');
+			const windowWidth = window.innerWidth;
+			const windowHeight = window.innerHeight;
+
+			// 根据窗口大小调整容器大小
+			container.style.width = `${Math.min(windowWidth * 0.8, 600)}px`;
+			container.style.height = `${windowHeight * 0.8}px`;
+		}
+
+		// 页面加载时调整大小
+		window.addEventListener('load', resizeContainer);
+		// 窗口大小改变时调整大小
+		window.addEventListener('resize', resizeContainer);
+	</script>
+</body>
+
+</html>
